@@ -1,25 +1,27 @@
-import notifier from 'node-notifier';
-import { exec } from 'node:child_process';
+import { exec, spawn } from 'node:child_process';
 
-// 25 minutes in milliseconds
-const WORK_DURATION = 1 * 10 * 1000 // 10 seconds
-const BREAK_DURATION = 1 * 10 * 1000 // 10 seconds
-const LOCK_DELAY = 5 * 1000 // 2 seconds
+// const WORK_DURATION = 25 * 60 * 1000; // 25 minutes
+// const BREAK_DURATION = 5 * 60 * 1000; // 5 minutes
+// const LOCK_DELAY = 5 * 1000; // 5 seconds
+
+const WORK_DURATION = 1 * 10 * 1000; // 25 minutes
+const BREAK_DURATION = 1 * 10 * 1000; // 5 minutes
+const LOCK_DELAY = 10 * 1000; // 10 seconds
 
 function startPomodoroCycle() {
     console.log('🔒 Work session started. Locking screen in 25 minutes...');
 
     setTimeout(() => {
-        // Notify for break
-        notifier.notify({
-            title: 'Take a Break!',
-            message: '🧘 Time for a 5-minute break! Walk, drink water, or just relax. Locking Screen in 5 Seconds',
-            sound: true,
-            wait: false
+        console.log('🧘 Break time! Launching full-screen reminder...');
+
+        // Launch Electron window
+        const electronProcess = spawn('npx', ['electron', './break-window.js'], {
+            shell: true,
+            stdio: 'inherit'
         });
 
+        // Wait 5 seconds, then lock the screen
         setTimeout(() => {
-            // Lock the screen (Windows only)
             exec('rundll32.exe user32.dll,LockWorkStation', (error) => {
                 if (error) {
                     console.error('❌ Failed to lock the screen:', error);
@@ -27,12 +29,13 @@ function startPomodoroCycle() {
                     console.log('✅ Screen locked. Enjoy your break!');
                 }
 
-                // Start the next cycle after the break (5 minutes later)
+                // Wait 5 minutes before restarting the cycle
                 setTimeout(() => {
                     startPomodoroCycle();
-                }, BREAK_DURATION); // 5 minutes
+                }, BREAK_DURATION);
             });
-        }, LOCK_DELAY)
+        }, LOCK_DELAY);
+
     }, WORK_DURATION);
 }
 
