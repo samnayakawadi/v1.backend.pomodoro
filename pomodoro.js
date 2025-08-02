@@ -5,8 +5,8 @@ import axios from 'axios';
 // const BREAK_DURATION = 5 * 60 * 1000; // 5 minutes
 // const LOCK_DELAY = 5 * 1000; // 5 seconds
 
-const WORK_DURATION = 15 * 10 * 1000; // 10 seconds for testing
-const BREAK_DURATION = 5 * 10 * 1000; // 10 seconds for testing
+const WORK_DURATION = 15 * 60 * 1000; // 10 seconds for testing
+const BREAK_DURATION = 5 * 60 * 1000; // 10 seconds for testing
 const LOCK_DELAY = 10 * 1000; // 10 seconds
 
 const NTFY_TOPIC = 'ntfy.sh/samnayakawadi_pomodoro';
@@ -33,7 +33,7 @@ async function sendNotification(title, message, tags = '', priority = 'default')
 }
 
 function startPomodoroCycle() {
-    console.log('🔒 Work session started. Locking screen in 10 seconds...');
+    console.log('🔒 Work session started.');
 
     setTimeout(async () => {
         console.log('🧘 Break time! Launching full-screen reminder...');
@@ -41,7 +41,7 @@ function startPomodoroCycle() {
         // Send "Break Started" notification
         await sendNotification(
             'Break Started',  // Removed emoji from header
-            '🧘 Time for a 10-second break! Step away from your screen and relax.',
+            '🧘 Time for a 5 minutes break! Step away from your screen and relax.',
             'coffee,break',
             'high'
         );
